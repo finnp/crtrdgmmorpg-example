@@ -19,9 +19,7 @@
     "crtrdg-arrows": "~0.0.1",
     "crtrdg-mouse": "~0.0.1",
     "inherits": "~2.0.0",
-    "aabb-2d": "0.0.0"
-  },
-  "devDependencies": {
+    "aabb-2d": "0.0.0",
     "browserify": "^4.1.5"
   }
 }
