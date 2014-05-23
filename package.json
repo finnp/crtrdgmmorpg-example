@@ -1,0 +1,27 @@
+{
+  "name": "testgameserver",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "browserify client.js > bundle.js && foreman start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "send": "^0.3.0",
+    "socket.io": "^0.9.17",
+    "socket.io-client": "^0.9.17",
+    "crtrdg-gameloop": "~0.0.1",
+    "crtrdg-entity": "0.0.8",
+    "crtrdg-keyboard": "~0.0.2",
+    "crtrdg-arrows": "~0.0.1",
+    "crtrdg-mouse": "~0.0.1",
+    "inherits": "~2.0.0",
+    "aabb-2d": "0.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^4.1.5"
+  }
+}
