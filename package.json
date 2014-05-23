@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "browserify client.js > bundle.js && foreman start"
+    "start": "browserify client.js > bundle.js && node server.js"
   },
   "author": "",
   "license": "ISC",
