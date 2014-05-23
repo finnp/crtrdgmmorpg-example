@@ -1,6 +1,6 @@
 var io = require('socket.io-client');
 
-var socket = io.connect('http://fexigame.herokuapp.com:80');
+var socket = io.connect('http://crtrdgmmorpg.herokuapp.com:80');
 
 // connection test
 socket.on('echo', function (data) {
