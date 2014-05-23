@@ -76,12 +76,10 @@ socket.on('position', function (data) {
 
   if (player) {
     // Update player
-    console.log('Update player');
     player.position.x = data.pos.x;
     player.position.y = data.pos.y;
   } else {
     // Create player
-    console.log('Create player');
     var newPlayer = new Player(data.id, data.pos.x, data.pos.y);
     // i should also add them to the game maybe
     players.push(newPlayer);
