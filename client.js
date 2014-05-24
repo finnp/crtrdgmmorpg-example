@@ -20,8 +20,7 @@ var arrows = new Arrows();
 
 inherits(Player, Entity);
 
-function Player(id, x, y) {
-    this.id = id;
+function Player(x, y) {
     this.position = new Vector2(x, y);
 
     this.size = {
@@ -52,29 +51,46 @@ Player.prototype.controller = function () {
 var me = new Player(0, 10, 10);
 me.addTo(game);
 
-var players = [me];
+var players = {
+  0: me
+}; // hash with ids as keys, we set us to 0
+socket.emit('join', {pos: me.position, mov: me.movement});
+
 
 socket.on('change', function (data) {
-  console.log('change');
-
-  var player = players.filter(function (player) {
-    return player.id === data.id;
-  })[0];
+  var player = players[data.id];
 
   if (player) {
-    // Update player
+      // Update player
     player.position.x = data.pos.x;
     player.position.y = data.pos.y;
     player.movement.x = data.mov.x;
     player.movement.y = data.mov.y;
-  } else {
-    // Create player
-    var newPlayer = new Player(data.id, data.pos.x, data.pos.y);
-    newPlayer.movement.x = data.mov.x;
-    newPlayer.movement.y = data.mov.y;
-    players.push(newPlayer);
   }
 
+
+})
+
+socket.on('join', function (data) {
+  var newPlayer = new Player(data.pos.x, data.pos.y);
+  newPlayer.movement.x = data.mov.x;
+  newPlayer.movement.y = data.mov.y;
+  players[data.id] = newPlayer;
+});
+
+socket.on('players', function (data) {
+  // initial players info
+  for (id in data) {
+    var info = data[id];
+    var player  = new Player(info.pos.x, info.pos.y);
+    player.movement.x = info.mov.x;
+    player.movement.y = info.mov.y;
+    players[info.id] = player;
+  }
+})
+
+socket.on('leave', function (id) {
+  delete players[id];
 })
 
 me.on('update', function (interval) {
@@ -82,14 +98,16 @@ me.on('update', function (interval) {
 });
 
 game.on('update', function () {
-  players.forEach(function (player) {
+  for (id in players) {
+    var player = players[id];
     player.position.add(player.movement);
-  });
+  }
 });
 
 game.on('draw', function(context){
   context.fillStyle = '#fff';
-  players.forEach(function (player) {
+  for (id in players) {
+    var player = players[id];
     context.fillRect(player.position.x, player.position.y, player.size.x, player.size.y);
-  });
+  }
 });
