@@ -28,7 +28,7 @@ function Player(x, y) {
       y: 10
     };
 
-    this.velocity = 0.5; // base speed not current
+    this.velocity = 0.25; // base speed not current
     this.movement = new Vector2(0, 0); // length of the vector is the speed
 }
 
