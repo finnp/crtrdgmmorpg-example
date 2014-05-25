@@ -12,8 +12,8 @@ var inherits = require('inherits');
 
 var game = new Game({
   canvasId: 'game',
-  width: 800,
-  height: 400,
+  width: window.innerWidth,
+  height: window.innerHeight,
   backgroundColor: '#eee'
 });
 
