@@ -6,6 +6,7 @@ var Game = require('crtrdg-gameloop');
 var Arrows = require('crtrdg-arrows');
 var Entity = require('crtrdg-entity');
 var Vector2 = require('vector2-node'); // http://rahatarmanahmed.github.io/vector2-node/docs/index.html
+var Color = require('color');
 
 var inherits = require('inherits');
 
@@ -13,7 +14,7 @@ var game = new Game({
   canvasId: 'game',
   width: 800,
   height: 400,
-  backgroundColor: '#ff1f1f'
+  backgroundColor: '#eee'
 });
 
 var arrows = new Arrows();
@@ -22,6 +23,8 @@ inherits(Player, Entity);
 
 function Player(x, y) {
     this.position = new Vector2(x, y);
+
+    this.color = new Color({h: Math.random() * 360, s: 63, l: 35}).hexString();
 
     this.size = {
       x: 10,
@@ -110,12 +113,13 @@ game.on('update', function (interval) {
 
 game.on('draw', function(context){
   // draw players
-  context.fillStyle = '#fff';
   for (id in players) {
     var player = players[id];
+    context.fillStyle = player.color;
     context.fillRect(player.position.x, player.position.y, player.size.x, player.size.y);
   }
   // draw player count
-  context.font="20px Arial";
-  context.fillText(playersCount + " online.",10,30);
+  context.fillStyle = '#000';
+  context.font = '20px Arial';
+  context.fillText(playersCount + ' online',10,30);
 });
