@@ -16,8 +16,12 @@ app.listen(port);
 var players = {};
 
 io.sockets.on('connection', function (socket) {
+  console.dir(players);
   socket.on('change', function (data) {
-    players[socket.id] = data;
+    var player = players[socket.id];
+    for (key in data) {
+      player[key] = data[key];
+    }
     data.id = socket.id;
     socket.broadcast.emit('change', data);
   });

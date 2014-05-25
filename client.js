@@ -58,7 +58,7 @@ var playersCount = 1;
 var players = {
   0: me
 }; // hash with ids as keys, we set us to 0
-socket.emit('join', {pos: me.position, mov: me.movement});
+socket.emit('join', {pos: me.position, mov: me.movement, color: me.color});
 
 
 socket.on('change', function (data) {
@@ -76,20 +76,24 @@ socket.on('change', function (data) {
 })
 
 socket.on('join', function (data) {
+  console.dir(data);
   var newPlayer = new Player(data.pos.x, data.pos.y);
   newPlayer.movement.x = data.mov.x;
   newPlayer.movement.y = data.mov.y;
+  newPlayer.color = data.color;
   players[data.id] = newPlayer;
   playersCount++;
 });
 
 socket.on('players', function (data) {
   // initial players info
+  console.dir(data);
   for (id in data) {
     var info = data[id];
     var player  = new Player(info.pos.x, info.pos.y);
     player.movement.x = info.mov.x;
     player.movement.y = info.mov.y;
+    player.color = info.color;
     players[info.id] = player;
     playersCount++;
   }
