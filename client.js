@@ -51,6 +51,7 @@ Player.prototype.controller = function () {
 var me = new Player(0, 10, 10);
 me.addTo(game);
 
+var playersCount = 1;
 var players = {
   0: me
 }; // hash with ids as keys, we set us to 0
@@ -76,6 +77,7 @@ socket.on('join', function (data) {
   newPlayer.movement.x = data.mov.x;
   newPlayer.movement.y = data.mov.y;
   players[data.id] = newPlayer;
+  playersCount++;
 });
 
 socket.on('players', function (data) {
@@ -86,10 +88,12 @@ socket.on('players', function (data) {
     player.movement.x = info.mov.x;
     player.movement.y = info.mov.y;
     players[info.id] = player;
+    playersCount++;
   }
 })
 
 socket.on('leave', function (id) {
+  playersCount--;
   delete players[id];
 })
 
@@ -105,9 +109,13 @@ game.on('update', function (interval) {
 });
 
 game.on('draw', function(context){
+  // draw players
   context.fillStyle = '#fff';
   for (id in players) {
     var player = players[id];
     context.fillRect(player.position.x, player.position.y, player.size.x, player.size.y);
   }
+  // draw player count
+  context.font="20px Arial";
+  context.fillText(playersCount + " online.",10,30);
 });
