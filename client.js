@@ -1,14 +1,13 @@
+// Socket connection
 var io = require('socket.io-client');
-
 var socket = io.connect(location.origin);
 
+// Game and Player
 var Game = require('crtrdg-gameloop');
-var Arrows = require('crtrdg-arrows');
-var Entity = require('crtrdg-entity');
-var Vector2 = require('vector2-node'); // http://rahatarmanahmed.github.io/vector2-node/docs/index.html
-var Color = require('color');
+var Player = require('./Player.js');
 
-var inherits = require('inherits');
+
+// Init
 
 var game = new Game({
   canvasId: 'game',
@@ -17,49 +16,26 @@ var game = new Game({
   backgroundColor: '#eee'
 });
 
-var arrows = new Arrows();
-
-inherits(Player, Entity);
-
-function Player(x, y) {
-    this.position = new Vector2(x, y);
-
-    this.color = new Color({h: Math.random() * 360, s: 63, l: 35}).hexString();
-
-    this.size = {
-      x: 10,
-      y: 10
-    };
-
-    this.velocity = 0.25; // base speed not current
-    this.movement = new Vector2(0, 0); // length of the vector is the speed
-}
-
-Player.prototype.controller = function () {
-
-  var dx = arrows.isDown('right') - arrows.isDown('left');
-  var dy = arrows.isDown('down') - arrows.isDown('up');
-  var movement = new Vector2(dx, dy);
-  if (movement.length() > 0) {
-    movement.normalize();
-  }
-  movement.scale(this.velocity);
-  if(!movement.equals(this.movement)) {
-    this.movement = movement;
-    socket.emit('change', {pos: this.position, mov: this.movement});
-  }
-
-}
-
 var me = new Player(0, 10, 10);
+
 me.addTo(game);
 
 var playersCount = 1;
+var chatBoxText = '';
+// hash with ids as keys, we simply set us as 0
 var players = {
   0: me
-}; // hash with ids as keys, we set us to 0
+};
+
+// Networks etmits
+
 socket.emit('join', {pos: me.position, mov: me.movement, color: me.color});
 
+me.on('change', function () {
+  socket.emit('change', {pos: this.position, mov: this.movement});
+});
+
+// Network events
 
 socket.on('change', function (data) {
   var player = players[data.id];
@@ -104,9 +80,8 @@ socket.on('leave', function (id) {
   delete players[id];
 })
 
-me.on('update', function (interval) {
-    this.controller(); // When keys are pressed
-});
+
+// Game Updates
 
 game.on('update', function (interval) {
   for (id in players) {
@@ -114,6 +89,13 @@ game.on('update', function (interval) {
     player.position.add(player.movement.clone().scale(interval));
   }
 });
+
+
+me.on('update', function (interval) {
+    this.controller(); // When keys are pressed
+});
+
+// Game Draw
 
 game.on('draw', function(context){
   // draw players
@@ -123,7 +105,7 @@ game.on('draw', function(context){
     context.fillRect(player.position.x, player.position.y, player.size.x, player.size.y);
   }
   // draw player count
-  context.fillStyle = '#000';
+  context.fillStyle = '#444';
   context.font = '20px Arial';
   context.fillText(playersCount + ' online',10,30);
 });
