@@ -11,12 +11,10 @@ var Player = require('./Player.js');
 
 var game = new Game({
   canvasId: 'game',
-  width: window.innerWidth,
-  height: window.innerHeight,
   backgroundColor: '#eee'
 });
 
-var me = new Player(0, 10, 10);
+var me = new Player(game.width / 2, game.height / 2);
 
 me.addTo(game);
 
