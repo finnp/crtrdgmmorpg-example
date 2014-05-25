@@ -11,7 +11,7 @@ inherits(Player, Entity);
 
 
 function Player(x, y) {
-    this.position = new Vector2(x, y);
+    this.position = new Vector2(x || 0, y || 0);
 
     this.color = new Color({h: Math.random() * 360, s: 63, l: 35}).hexString();
 
@@ -35,7 +35,19 @@ Player.prototype.controller = function () {
   movement.scale(this.velocity);
   if(!movement.equals(this.movement)) {
     this.movement = movement;
-    this.emit('change', {pos: this.position, mov: this.movement});
+    this.emit('change', this);
   }
+}
 
+Player.prototype.update = function (data) {
+  for (key in data) {
+    // We don't want to override Vector objects
+    // Maybe we could do a recursive nested objects update? (Module?)
+    if (['movement', 'position'].indexOf(key) > -1) {
+      this[key].x = data[key].x;
+      this[key].y = data[key].y;
+    } else {
+      this[key] = data[key];
+    }
+  }
 }

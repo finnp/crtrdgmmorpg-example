@@ -19,7 +19,7 @@ var me = new Player(game.width / 2, game.height / 2);
 me.addTo(game);
 
 var playersCount = 1;
-var chatBoxText = '';
+
 // hash with ids as keys, we simply set us as 0
 var players = {
   0: me
@@ -27,10 +27,10 @@ var players = {
 
 // Networks etmits
 
-socket.emit('join', {pos: me.position, mov: me.movement, color: me.color});
+socket.emit('join', {position: me.position, movement: me.movement, color: me.color});
 
-me.on('change', function () {
-  socket.emit('change', {pos: this.position, mov: this.movement});
+me.on('change', function (data) {
+  socket.emit('change', {position: data.position, movement: data.movement});
 });
 
 // Network events
@@ -40,21 +40,14 @@ socket.on('change', function (data) {
 
   if (player) {
       // Update player
-    player.position.x = data.pos.x;
-    player.position.y = data.pos.y;
-    player.movement.x = data.mov.x;
-    player.movement.y = data.mov.y;
+      player.update(data);
   }
-
-
 })
 
 socket.on('join', function (data) {
   console.dir(data);
-  var newPlayer = new Player(data.pos.x, data.pos.y);
-  newPlayer.movement.x = data.mov.x;
-  newPlayer.movement.y = data.mov.y;
-  newPlayer.color = data.color;
+  var newPlayer = new Player();
+  newPlayer.update(data);
   players[data.id] = newPlayer;
   playersCount++;
 });
@@ -64,10 +57,8 @@ socket.on('players', function (data) {
   console.dir(data);
   for (id in data) {
     var info = data[id];
-    var player  = new Player(info.pos.x, info.pos.y);
-    player.movement.x = info.mov.x;
-    player.movement.y = info.mov.y;
-    player.color = info.color;
+    var player  = new Player();
+    player.update(info);
     players[info.id] = player;
     playersCount++;
   }
@@ -105,5 +96,5 @@ game.on('draw', function(context){
   // draw player count
   context.fillStyle = '#444';
   context.font = '20px Arial';
-  context.fillText(playersCount + ' online',10,30);
+  context.fillText(playersCount + ' online', 10, 30);
 });
