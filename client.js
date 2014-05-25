@@ -28,7 +28,7 @@ function Player(x, y) {
       y: 10
     };
 
-    this.velocity = 4; // base speed not current
+    this.velocity = 0.5; // base speed not current
     this.movement = new Vector2(0, 0); // length of the vector is the speed
 }
 
@@ -97,10 +97,10 @@ me.on('update', function (interval) {
     this.controller(); // When keys are pressed
 });
 
-game.on('update', function () {
+game.on('update', function (interval) {
   for (id in players) {
     var player = players[id];
-    player.position.add(player.movement);
+    player.position.add(player.movement.clone().scale(interval));
   }
 });
 
