@@ -39,17 +39,16 @@ socket.on('change', function (data) {
   var player = players[data.id];
 
   if (player) {
-      // Update player
       player.update(data);
   }
 })
 
 socket.on('join', function (data) {
-  console.dir(data);
   var newPlayer = new Player();
   newPlayer.update(data);
   players[data.id] = newPlayer;
   playersCount++;
+  player.addTo(game);
 });
 
 socket.on('players', function (data) {
@@ -61,6 +60,7 @@ socket.on('players', function (data) {
     player.update(info);
     players[info.id] = player;
     playersCount++;
+    player.addTo(game);
   }
 })
 
